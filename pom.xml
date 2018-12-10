@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>br.ufes.is-neurons.dev.neurons</groupId>
+  <artifactId>neurons</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <scene.version>0.9.1</scene.version>
+	    <drools.version>5.5.0.Final</drools.version>
+	    <github.global.server>github</github.global.server>
+    </properties>
+    
+    <dependencies>
+    	
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-core</artifactId>
+            <version>0.9.3</version>
+            <!-- in a real topology that will be deploy to a real cluster, scope should be set to provided
+                 as shown below. we're keeping it in default 'compile' scope to allow for easy execution with
+                 maven in local cluster mode -->
+            <!-- <scope>provided</scope> -->
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.slf4j</groupId>
+            		<artifactId>log4j-over-slf4j</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.ow2.asm</groupId>
+            		<artifactId>asm</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+         <!--drools-->
+      <dependency>
+	  <groupId>org.drools</groupId>
+	  <artifactId>knowledge-api</artifactId>
+	  <version>${drools.version}</version>
+	  <type>jar</type>
+      </dependency>
+      <dependency>
+	  <groupId>org.drools</groupId>
+	  <artifactId>drools-core</artifactId>
+	  <version>${drools.version}</version>
+	  <type>jar</type>
+      </dependency>
+      <dependency>
+	  <groupId>org.drools</groupId>
+	  <artifactId>drools-compiler</artifactId>
+	  <version>${drools.version}</version>
+	  <type>jar</type>
+      </dependency>
+      <dependency>
+       <groupId>br.ufes.inf.lprm</groupId>
+       <artifactId>scene-core</artifactId>
+       <version>${scene.version}</version> 
+      </dependency>
+     
+      
+      <dependency>
+      	<groupId>com.rabbitmq</groupId>
+      	<artifactId>amqp-client</artifactId>
+      	<version>4.1.0</version>
+      </dependency>
+	  <dependency>
+	    <groupId>com.rethinkdb</groupId>
+	    <artifactId>rethinkdb-driver</artifactId>
+	    <version>2.3.3</version>
+	  </dependency>
+	  
+	  <dependency>
+	  
+	  	<groupId>groupId</groupId>
+    	<artifactId>is</artifactId>
+	    <version>1.0-SNAPSHOT</version>
+	  
+	  </dependency>
+      
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.dataformat</groupId>
+		    <artifactId>jackson-dataformat-xml</artifactId>
+		    <version>2.9.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>br.ufes.neurons.dev</groupId>
+			<artifactId>LambdaToDRLParser</artifactId>
+			<version>0.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>	
+		<!-- https://mvnrepository.com/artifact/org.ow2.asm/asm -->
+		<dependency>
+		    <groupId>org.ow2.asm</groupId>
+		    <artifactId>asm</artifactId>
+		    <version>6.0</version>
+		</dependency>
+
+		
+    </dependencies>
+    <repositories>
+    <repository>
+	<id>jboss</id>
+	<name>jboss</name>
+	<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>situation-api-repo</id>
+      <name>situation-api-repo</name>
+      <url>https://raw.github.com/pereirazc/SCENE/mvn-repo</url>
+    </repository>
+  </repositories>  
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>core.neurons</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18</version>
+                <configuration>
+                    <environmentVariables>
+                        <STORM_TEST_TIMEOUT_MS>60000</STORM_TEST_TIMEOUT_MS>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+  
+</project>
